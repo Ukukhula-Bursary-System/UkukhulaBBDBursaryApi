@@ -21,7 +21,7 @@ public class JdbcStudentRepository implements StudentInterface {
     return jdbcTemplate.update(
         sql,
         new Object[] { student.getFirstName(), student.getLastName(), student.getPhoneNumber(), student.getEmail(),
-            student.getRace(), student.getIdentityDocument(), student.getHeadOfDepartmentID(),
+            student.getRace(), student.getIdentityDocument(), student.getHeadofdepartmentId(),
             student.getMotivation() });
   }
 
