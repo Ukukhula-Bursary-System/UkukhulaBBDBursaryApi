@@ -1,6 +1,7 @@
 package com.bbd.bursary.manager.controller;
 
-import com.bbd.bursary.manager.model.Institute;
+import com.bbd.bursary.manager.model.InstituteInfo;
+import com.bbd.bursary.manager.repository.InstituteInfoRepository;
 import com.bbd.bursary.manager.repository.InstituteInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,33 +11,36 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @RestController
 @RequestMapping("/institute")
 public class InstitutesController {
 
+    private final InstituteInterface instituteRepository;
+    private final InstituteInfoRepository instituteInfoRepository;
+
     @Autowired
-    InstituteInterface instituteRepository;
+    public InstitutesController(InstituteInterface instituteRepository,
+                                InstituteInfoRepository instituteInfoRepository) {
+        this.instituteRepository = instituteRepository;
+        this.instituteInfoRepository = instituteInfoRepository;
+    }
 
     @GetMapping
-    public ResponseEntity<List<Institute>> getAllInstitutes() {
-        List<Institute> institutes = instituteRepository.getAllInstitutes();
-        if(institutes == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        } else {
-           return new ResponseEntity<>(institutes, HttpStatus.OK);
-        }
+    public ResponseEntity<List<InstituteInfo>> getAllInstitutes() {
+        List<InstituteInfo> institutes = instituteInfoRepository.findAll();
+        return new ResponseEntity<>(institutes, HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<String> addInstitute(@RequestBody Institute institute) {
-        try {
-            instituteRepository.save(institute);
-            return new ResponseEntity<>("Institute was created successfully.", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @PostMapping
+//    public ResponseEntity<String> addInstitute(@RequestBody Institute institute) {
+//        try {
+//            instituteRepository.save(institute);
+//            return new ResponseEntity<>("Institute was created successfully.", HttpStatus.CREATED);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @PutMapping("/funds/{id}/{amount}")
     public ResponseEntity<String> allocateInstituteFunds(@PathVariable("amount") double amount, @PathVariable("id") int id) {
