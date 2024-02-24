@@ -1,4 +1,4 @@
-package com.bbd.bursary.manager.Model;
+package com.bbd.bursary.manager.model;
 
 public class User {
     private long userId;

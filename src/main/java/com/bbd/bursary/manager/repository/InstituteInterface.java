@@ -1,6 +1,6 @@
-package com.bbd.bursary.manager.Repository;
+package com.bbd.bursary.manager.repository;
 
-import com.bbd.bursary.manager.Model.Institute;
+import com.bbd.bursary.manager.model.Institute;
 
 import java.util.List;
 
