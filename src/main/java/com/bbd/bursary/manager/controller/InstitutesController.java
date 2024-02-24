@@ -32,15 +32,11 @@ public class InstitutesController {
         return new ResponseEntity<>(institutes, HttpStatus.OK);
     }
 
-//    @PostMapping
-//    public ResponseEntity<String> addInstitute(@RequestBody Institute institute) {
-//        try {
-//            instituteRepository.save(institute);
-//            return new ResponseEntity<>("Institute was created successfully.", HttpStatus.CREATED);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    @GetMapping("/{statusId}")
+    public ResponseEntity<List<InstituteInfo>> getAllInstitutesByStatus(@PathVariable long statusId) {
+        List<InstituteInfo> institutesByStatus = instituteInfoRepository.findByStatus(statusId);
+        return new ResponseEntity<>(institutesByStatus, HttpStatus.OK);
+    }
 
     @PutMapping("/funds/{id}/{amount}")
     public ResponseEntity<String> allocateInstituteFunds(@PathVariable("amount") double amount, @PathVariable("id") int id) {

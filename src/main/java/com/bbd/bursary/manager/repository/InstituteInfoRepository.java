@@ -23,4 +23,10 @@ public class InstituteInfoRepository {
         String sql = "SELECT [InstituteID], [InstituteName], [Status], [email] FROM [dbo].[vInstituteInfo]";
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(InstituteInfo.class));
     }
+
+    public List<InstituteInfo> findByStatus(long statusId) {
+        String sql = "SELECT [InstituteID], [InstituteName], [Status], [email] FROM [dbo].[vInstituteInfo] " +
+                     "WHERE [ApplicationStatusID] = ?";
+        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(InstituteInfo.class), statusId);
+    }
 }
