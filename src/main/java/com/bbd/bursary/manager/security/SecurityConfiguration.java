@@ -20,7 +20,9 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/authentication/login").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/statuses").permitAll()
+                        .requestMatchers("/institute/**").permitAll() //.hasAuthority("Admin")
+                        .anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();

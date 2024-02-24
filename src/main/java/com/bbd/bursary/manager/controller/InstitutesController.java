@@ -1,40 +1,89 @@
 package com.bbd.bursary.manager.controller;
 
-import com.bbd.bursary.manager.model.Institute;
+import com.bbd.bursary.manager.dto.InstituteInfoDTO;
+import com.bbd.bursary.manager.exception.NotFoundException;
+import com.bbd.bursary.manager.model.InstituteInfo;
+import com.bbd.bursary.manager.repository.InstituteInfoRepository;
 import com.bbd.bursary.manager.repository.InstituteInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @RestController
 @RequestMapping("/institute")
 public class InstitutesController {
 
+    private final InstituteInterface instituteRepository;
+    private final InstituteInfoRepository instituteInfoRepository;
+
     @Autowired
-    InstituteInterface instituteRepository;
+    public InstitutesController(InstituteInterface instituteRepository,
+                                InstituteInfoRepository instituteInfoRepository) {
+        this.instituteRepository = instituteRepository;
+        this.instituteInfoRepository = instituteInfoRepository;
+    }
 
     @GetMapping
-    public ResponseEntity<List<Institute>> getAllInstitutes() {
-        List<Institute> institutes = instituteRepository.getAllInstitutes();
-        if(institutes == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        } else {
-           return new ResponseEntity<>(institutes, HttpStatus.OK);
-        }
+    public ResponseEntity<List<InstituteInfo>> getAllInstitutes() {
+        List<InstituteInfo> institutes = instituteInfoRepository.findAll();
+
+        if (institutes.isEmpty())
+            return new ResponseEntity<>(institutes, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(institutes, HttpStatus.OK);
+    }
+
+    @GetMapping("/{statusId}")
+    public ResponseEntity<List<InstituteInfo>> getAllInstitutesByStatus(@PathVariable long statusId) {
+        List<InstituteInfo> institutesByStatus = instituteInfoRepository.findByStatus(statusId);
+
+        if (institutesByStatus.isEmpty())
+            return new ResponseEntity<>(institutesByStatus, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(institutesByStatus, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<String> addInstitute(@RequestBody Institute institute) {
+    public ResponseEntity<?> saveInstitution(@RequestBody InstituteInfoDTO instituteInfoDTO) {
         try {
-            instituteRepository.save(institute);
-            return new ResponseEntity<>("Institute was created successfully.", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            instituteInfoRepository.save(instituteInfoDTO);
+            return new ResponseEntity<>(
+                    Map.of("message", "Institute successfully saved!"),
+                    HttpStatus.CREATED
+            );
+        } catch (SQLException e) {
+            return new ResponseEntity<>(
+                    Map.of("message", e.getMessage()),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+    }
+
+    @PutMapping("/{instituteId}")
+    public ResponseEntity<?> updateInstitution(@PathVariable long instituteId,
+                                               @RequestBody InstituteInfoDTO instituteInfoDTO) {
+        try {
+            Optional<InstituteInfo> instituteInfo = instituteInfoRepository.updateInstitute(instituteId, instituteInfoDTO);
+            return new ResponseEntity<>(
+                    instituteInfo.get(),
+                    HttpStatus.CREATED
+            );
+        } catch (SQLException e) {
+            return new ResponseEntity<>(
+                    Map.of("message", e.getMessage()),
+                    HttpStatus.BAD_REQUEST
+            );
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(
+                    Map.of("message", e.getMessage()),
+                    HttpStatus.NOT_FOUND
+            );
         }
     }
 
