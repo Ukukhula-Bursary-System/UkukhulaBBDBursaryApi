@@ -25,7 +25,12 @@ public class StudentRepository {
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Student.class));
     }
 
-    public void updateStatus(String status) {
+    public void updateStatus(int studentID, String status) {
+
+        String sql1 = "SELECT [ApplicationStatusID] FROM [dbo].[Application_Status] WHERE [Status]=?";
+        int statusID = jdbcTemplate.queryForObject(sql1, Integer.class, status);
+        String sql2 = "UPDATE [dbo].[Bursary_Applicants] SET [BursaryApplicationStatusID] = ? WHERE StudentID=?";
+        jdbcTemplate.update(sql2, statusID, studentID);
 
     }
 }

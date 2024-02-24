@@ -35,6 +35,10 @@ public class studentController {
         return new ResponseEntity<>(students, students.isEmpty()? HttpStatus.NO_CONTENT: HttpStatus.OK);
     }
 
-
+    @PostMapping("/update/{studentID}/{status}")
+    public ResponseEntity<String> updateStatus(@PathVariable("studentID") int studentID, @PathVariable("status") String status) {
+        studentRepository.updateStatus(studentID, status);
+        return new ResponseEntity<>("Status updated", HttpStatus.OK);
+    }
 
 }

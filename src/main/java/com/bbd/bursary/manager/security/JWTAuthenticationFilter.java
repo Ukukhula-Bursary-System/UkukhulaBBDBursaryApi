@@ -35,7 +35,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
 
-        if (authHeader == null || authHeader.isEmpty()) {
+        if (authHeader.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
         }
