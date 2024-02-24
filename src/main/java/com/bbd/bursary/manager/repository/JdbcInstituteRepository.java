@@ -1,5 +1,6 @@
-package com.bbd.bursary.manager.Repository;
-import com.bbd.bursary.manager.Model.Institute;
+package com.bbd.bursary.manager.repository;
+import com.bbd.bursary.manager.model.Institute;
+import com.bbd.bursary.manager.repository.InstituteInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;

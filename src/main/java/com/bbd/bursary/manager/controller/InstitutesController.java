@@ -1,8 +1,7 @@
-package com.bbd.bursary.manager.Controller;
+package com.bbd.bursary.manager.controller;
 
-import com.bbd.bursary.manager.Model.Institute;
-import com.bbd.bursary.manager.Repository.JdbcInstituteRepository;
-import com.bbd.bursary.manager.Repository.InstituteInterface;
+import com.bbd.bursary.manager.model.Institute;
+import com.bbd.bursary.manager.repository.InstituteInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
