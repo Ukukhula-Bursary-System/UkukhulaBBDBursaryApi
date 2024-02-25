@@ -3,8 +3,10 @@ package com.bbd.bursary.manager.controller;
 import com.bbd.bursary.manager.dto.InstituteInfoDTO;
 import com.bbd.bursary.manager.exception.NotFoundException;
 import com.bbd.bursary.manager.model.InstituteInfo;
+import com.bbd.bursary.manager.model.InstitutionFundAllocation;
 import com.bbd.bursary.manager.repository.InstituteInfoRepository;
 import com.bbd.bursary.manager.repository.InstituteInterface;
+import com.bbd.bursary.manager.repository.InstitutionFundAllocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +25,15 @@ public class InstitutesController {
 
     private final InstituteInterface instituteRepository;
     private final InstituteInfoRepository instituteInfoRepository;
+    private final InstitutionFundAllocationRepository institutionFundAllocationRepository;
 
     @Autowired
     public InstitutesController(InstituteInterface instituteRepository,
-                                InstituteInfoRepository instituteInfoRepository) {
+                                InstituteInfoRepository instituteInfoRepository,
+                                InstitutionFundAllocationRepository institutionFundAllocationRepository) {
         this.instituteRepository = instituteRepository;
         this.instituteInfoRepository = instituteInfoRepository;
+        this.institutionFundAllocationRepository = institutionFundAllocationRepository;
     }
 
     @GetMapping
@@ -85,6 +90,27 @@ public class InstitutesController {
                     HttpStatus.NOT_FOUND
             );
         }
+    }
+
+    @GetMapping("/funds")
+    public ResponseEntity<List<InstitutionFundAllocation>> allAllocatedInstitutesFunding() {
+        List<InstitutionFundAllocation> institutionFundAllocations = institutionFundAllocationRepository
+                .findAll();
+
+        if (institutionFundAllocations.isEmpty())
+            return new ResponseEntity<>(institutionFundAllocations, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(institutionFundAllocations, HttpStatus.OK);
+    }
+
+    @GetMapping("/funds/{year}")
+    public ResponseEntity<List<InstitutionFundAllocation>> allAllocatedInstitutesFundingByYear(
+            @PathVariable("year") int year) {
+        List<InstitutionFundAllocation> institutionFundAllocations = institutionFundAllocationRepository
+                .findAllByYear(year);
+
+        if (institutionFundAllocations.isEmpty())
+            return new ResponseEntity<>(institutionFundAllocations, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(institutionFundAllocations, HttpStatus.OK);
     }
 
     @PutMapping("/funds/{id}/{amount}")
