@@ -10,7 +10,7 @@ import com.bbd.bursary.manager.repository.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @RestController
 @RequestMapping("/student")
 public class studentController {

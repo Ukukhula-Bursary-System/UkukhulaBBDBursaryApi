@@ -15,6 +15,24 @@ public class Student {
     private String BursaryAmount;
     private String Status;
 
+    public long getStudentID() {
+        return StudentID;
+    }
+
+    public void setStudentID(long studentID) {
+        StudentID = studentID;
+    }
+
+    public String getUniversity() {
+        return University;
+    }
+
+    public void setUniversity(String university) {
+        University = university;
+    }
+
+    private  String University;
+
     // Default constructor
     public Student() {
     }
