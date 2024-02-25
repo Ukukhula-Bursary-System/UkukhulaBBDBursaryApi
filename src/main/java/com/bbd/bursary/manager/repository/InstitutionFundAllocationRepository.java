@@ -1,11 +1,13 @@
 package com.bbd.bursary.manager.repository;
 
+import com.bbd.bursary.manager.dto.InstitutionFundAllocationDTO;
 import com.bbd.bursary.manager.model.InstitutionFundAllocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -32,5 +34,19 @@ public class InstitutionFundAllocationRepository {
                 "FROM [dbo].[vInstitutionFundAllocation] " +
                 "WHERE YEAR([FinacialDate]) = ?";
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(InstitutionFundAllocation.class), year);
+    }
+
+    public void save(InstitutionFundAllocationDTO institutionFundAllocationDTO) throws SQLException {
+        String sql = "INSERT INTO [dbo].[Institution_Fund_Allocation] (AllocatedAmount, AllocatedRemainingAmount, InstituteID)" +
+                     " VALUES (?, ?, ?, [dbo].[udfGetBursaryFundId](YEAR(GETDATE())";
+        Object[] args = new Object[] {
+                institutionFundAllocationDTO.getAllocatedAmount(),
+                institutionFundAllocationDTO.getAllocatedAmount(),
+                institutionFundAllocationDTO.getInstituteId()
+        };
+        int updateCount = jdbcTemplate.update(sql, args);
+
+        if (updateCount != 1)
+            throw new SQLException("Allocating institute funding failed!");
     }
 }
