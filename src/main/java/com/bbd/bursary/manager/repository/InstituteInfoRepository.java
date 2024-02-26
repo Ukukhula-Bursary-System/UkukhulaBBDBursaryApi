@@ -8,8 +8,10 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -42,6 +44,15 @@ public class InstituteInfoRepository {
         String sql = "SELECT [InstituteID], [InstituteName], [Status], [email] FROM [dbo].[vInstituteInfo] " +
                      "WHERE [ApplicationStatusID] = ?";
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(InstituteInfo.class), statusId);
+    }
+
+    public Optional<Long> findIdByHeadOfDepartmentEmail(String email) {
+        String sql = "SELECT [InstituteID] FROM [dbo].[vHeadOfDepartment] WHERE [Email] = ?";
+        List<InstituteInfo> instituteId = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(InstituteInfo.class), email);
+
+        if (instituteId.isEmpty())
+            return Optional.empty();
+        return Optional.of(instituteId.getFirst().getInstituteId());
     }
 
     public void save(InstituteInfoDTO instituteInfoDTO) throws SQLException {

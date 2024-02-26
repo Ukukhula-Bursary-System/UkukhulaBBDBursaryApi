@@ -146,4 +146,31 @@ public class InstitutesController {
             return new ResponseEntity<>(institutionFundAllocations, HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(institutionFundAllocations, HttpStatus.OK);
     }
+
+    @GetMapping("funds/single-institute/{instituteId}")
+    public ResponseEntity<?> getAllAllocatedFundingForAnInstitute(@PathVariable long instituteId) {
+        if (!LoggedUser.checkRole(List.of("HOD")))
+            return LoggedUser.unauthorizedResponse("funds/single-institute/" + instituteId);
+
+        List<InstitutionFundAllocation> fundingHistory = institutionFundAllocationRepository
+                .findForInstitute(instituteId);
+
+        if (fundingHistory.isEmpty())
+            return new ResponseEntity<>(fundingHistory, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(fundingHistory, HttpStatus.OK);
+    }
+
+    @GetMapping("funds/single-institute/{instituteId}/{year}")
+    public ResponseEntity<?> getAllocatedFundingForAnInstituteForTheYear(@PathVariable long instituteId,
+                                                                         @PathVariable int year) {
+        if (!LoggedUser.checkRole(List.of("HOD")))
+            return LoggedUser.unauthorizedResponse("funds/single-institute/" + instituteId + "/" + year);
+
+        List<InstitutionFundAllocation> yearFunding = institutionFundAllocationRepository
+                .findForInstituteForYear(instituteId, year);
+
+        if (yearFunding.isEmpty())
+            return new ResponseEntity<>(yearFunding, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(yearFunding, HttpStatus.OK);
+    }
 }
