@@ -7,6 +7,7 @@ import com.bbd.bursary.manager.model.InstituteInfo;
 import com.bbd.bursary.manager.model.InstitutionFundAllocation;
 import com.bbd.bursary.manager.repository.InstituteInfoRepository;
 import com.bbd.bursary.manager.repository.InstitutionFundAllocationRepository;
+import com.bbd.bursary.manager.util.LoggedUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 
 @CrossOrigin
 @RestController
@@ -33,7 +33,10 @@ public class InstitutesController {
     }
 
     @GetMapping
-    public ResponseEntity<List<InstituteInfo>> getAllInstitutes() {
+    public ResponseEntity<?> getAllInstitutes() {
+        if (!LoggedUser.checkRole(List.of("Admin")))
+            return LoggedUser.unauthorizedResponse("/institute");
+
         List<InstituteInfo> institutes = instituteInfoRepository.findAll();
 
         if (institutes.isEmpty())
@@ -42,7 +45,10 @@ public class InstitutesController {
     }
 
     @GetMapping("/{statusId}")
-    public ResponseEntity<List<InstituteInfo>> getAllInstitutesByStatus(@PathVariable long statusId) {
+    public ResponseEntity<?> getAllInstitutesByStatus(@PathVariable long statusId) {
+        if (!LoggedUser.checkRole(List.of("Admin")))
+            return LoggedUser.unauthorizedResponse("/institute/" + statusId);
+
         List<InstituteInfo> institutesByStatus = instituteInfoRepository.findByStatus(statusId);
 
         if (institutesByStatus.isEmpty())
@@ -52,6 +58,9 @@ public class InstitutesController {
 
     @PostMapping
     public ResponseEntity<?> saveInstitution(@RequestBody InstituteInfoDTO instituteInfoDTO) {
+        if (!LoggedUser.checkRole(List.of("Admin")))
+            return LoggedUser.unauthorizedResponse("/institute");
+
         try {
             instituteInfoRepository.save(instituteInfoDTO);
             return new ResponseEntity<>(
@@ -69,6 +78,9 @@ public class InstitutesController {
     @PutMapping("/{instituteId}")
     public ResponseEntity<?> updateInstitution(@PathVariable long instituteId,
                                                @RequestBody InstituteInfoDTO instituteInfoDTO) {
+        if (!LoggedUser.checkRole(List.of("Admin")))
+            return LoggedUser.unauthorizedResponse("/institute/" + instituteId);
+
         try {
             Optional<InstituteInfo> instituteInfo = instituteInfoRepository.updateInstitute(instituteId, instituteInfoDTO);
             return new ResponseEntity<>(
@@ -89,7 +101,10 @@ public class InstitutesController {
     }
 
     @GetMapping("/funds")
-    public ResponseEntity<List<InstitutionFundAllocation>> allAllocatedInstitutesFunding() {
+    public ResponseEntity<?> allAllocatedInstitutesFunding() {
+        if (!LoggedUser.checkRole(List.of("Admin")))
+            return LoggedUser.unauthorizedResponse("/institute/funds");
+
         List<InstitutionFundAllocation> institutionFundAllocations = institutionFundAllocationRepository
                 .findAll();
 
@@ -101,6 +116,9 @@ public class InstitutesController {
     @PostMapping("/funds")
     public ResponseEntity<?> saveInstituteFundAllocation(
             @RequestBody InstitutionFundAllocationDTO institutionFundAllocation) {
+        if (!LoggedUser.checkRole(List.of("Admin")))
+            return LoggedUser.unauthorizedResponse("/institute/funds");
+
         try {
             institutionFundAllocationRepository.save(institutionFundAllocation);
             return new ResponseEntity<>(
@@ -116,8 +134,11 @@ public class InstitutesController {
     }
 
     @GetMapping("/funds/{year}")
-    public ResponseEntity<List<InstitutionFundAllocation>> allAllocatedInstitutesFundingByYear(
+    public ResponseEntity<?> allAllocatedInstitutesFundingByYear(
             @PathVariable("year") int year) {
+        if (!LoggedUser.checkRole(List.of("Admin")))
+            return LoggedUser.unauthorizedResponse("/institute/funds/" + year);
+
         List<InstitutionFundAllocation> institutionFundAllocations = institutionFundAllocationRepository
                 .findAllByYear(year);
 
