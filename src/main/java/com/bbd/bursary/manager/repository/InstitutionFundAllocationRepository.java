@@ -28,6 +28,22 @@ public class InstitutionFundAllocationRepository {
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(InstitutionFundAllocation.class));
     }
 
+    public List<InstitutionFundAllocation> findForInstitute(long instituteId) {
+        String sql = "SELECT [InstitutionFundAllocationID], [AllocatedAmount], " +
+                "[AllocatedRemainingAmount], [InstituteName], [FinacialDate] as [FinancialDate]" +
+                "FROM [dbo].[vInstitutionFundAllocation] WHERE [InstituteID] = ?";
+        return jdbcTemplate.query(
+                sql, BeanPropertyRowMapper.newInstance(InstitutionFundAllocation.class), instituteId);
+    }
+
+    public List<InstitutionFundAllocation> findForInstituteForYear(long instituteId, long year) {
+        String sql = "SELECT [InstitutionFundAllocationID], [AllocatedAmount], " +
+                "[AllocatedRemainingAmount], [InstituteName], [FinacialDate] as [FinancialDate]" +
+                "FROM [dbo].[vInstitutionFundAllocation] WHERE [InstituteID] = ? AND YEAR([FinacialDate]) = ?";
+        return jdbcTemplate.query(
+                sql, BeanPropertyRowMapper.newInstance(InstitutionFundAllocation.class), instituteId, year);
+    }
+
     public List<InstitutionFundAllocation> findAllByYear(int year) {
         String sql = "SELECT [InstitutionFundAllocationID], [AllocatedAmount], " +
                 "[AllocatedRemainingAmount], [InstituteName], [FinacialDate] as [FinancialDate]" +
