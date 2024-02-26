@@ -46,7 +46,7 @@ public class InstitutionFundAllocationRepository {
         };
         int updateCount = jdbcTemplate.update(sql, args);
 
-        if (updateCount != 1)
+        if (updateCount == 0)
             throw new SQLException("Allocating institute funding failed!");
     }
 }
