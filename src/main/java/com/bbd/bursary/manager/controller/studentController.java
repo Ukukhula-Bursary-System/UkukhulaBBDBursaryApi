@@ -1,13 +1,12 @@
 package com.bbd.bursary.manager.controller;
 
 import com.bbd.bursary.manager.model.Student;
+import com.bbd.bursary.manager.util.LoggedUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import com.bbd.bursary.manager.repository.*;
-
 import java.util.List;
 
 @CrossOrigin
@@ -19,24 +18,33 @@ public class studentController {
   private StudentRepository studentRepository;
 
   @GetMapping("/all-applications")
-  public ResponseEntity<List<Student>> AllStudentApplication() {
+  public ResponseEntity<?> AllStudentApplication() {
+      if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
+          return LoggedUser.unauthorizedResponse("/all/applications");
 
     List<Student> students = studentRepository.getAll();
 
     return new ResponseEntity<>(students, students.isEmpty()? HttpStatus.NO_CONTENT: HttpStatus.OK);
   }
     @GetMapping("/all/{status}")
-     public ResponseEntity<List<Student>> AllFiltered(@PathVariable("status") String status) {
-          List<Student> students = studentRepository.getAll();
-          students = students.stream()
-                  .filter(student -> student.getStatus().equals(status))
-                    .toList()
-          ;
+     public ResponseEntity<?> AllFiltered(@PathVariable("status") String status) {
+        if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
+            return LoggedUser.unauthorizedResponse("/all/{status}");
+
+        List<Student> students = studentRepository.getAll();
+        students = students.stream()
+                .filter(student -> student.getStatus().equals(status))
+                .toList();
         return new ResponseEntity<>(students, students.isEmpty()? HttpStatus.NO_CONTENT: HttpStatus.OK);
+
+
     }
 
     @PostMapping("/update/{studentID}/{status}")
-    public ResponseEntity<String> updateStatus(@PathVariable("studentID") int studentID, @PathVariable("status") String status) {
+    public ResponseEntity<?> updateStatus(@PathVariable("studentID") int studentID, @PathVariable("status") String status) {
+        if (!LoggedUser.checkRole(List.of("Admin")))
+            return LoggedUser.unauthorizedResponse("/update/{studentID}/{status}");
+
         studentRepository.updateStatus(studentID, status);
         return new ResponseEntity<>("Status updated", HttpStatus.OK);
     }
