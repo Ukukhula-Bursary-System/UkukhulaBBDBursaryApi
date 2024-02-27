@@ -1,4 +1,5 @@
 package com.bbd.bursary.manager.repository;
+import com.bbd.bursary.manager.model.Document;
 import com.bbd.bursary.manager.model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -33,4 +34,16 @@ public class StudentRepository {
         jdbcTemplate.update(sql2, statusID, studentID);
 
     }
+    public Document getStudentDocuments(int BursaryApplicationStatusID) {
+        String sql =  "SLECT  [DocumentID] , [Trnsacript], [identityDocument] FROM [dbo].[Document] WHERE [BursaryApplicationStatusID] = ?";
+        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Document.class), BursaryApplicationStatusID)
+                .stream()
+                .findFirst()
+                .orElse(null);
+
+
+    }
+
 }
+
+
