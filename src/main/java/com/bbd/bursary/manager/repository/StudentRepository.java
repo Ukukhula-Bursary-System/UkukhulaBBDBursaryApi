@@ -26,6 +26,16 @@ public class StudentRepository {
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Student.class));
     }
 
+    public List<Student> findAllByHeadOfDepartmentEmail(String email) {
+        String sql = "SELECT " +
+                     "  [StudentID], [FirstName], [LastName], [University], " +
+                     "  [AverageMarks], [BursaryAmount], [Motivation], " +
+                     "  [status], [HeadOfDepartmentID] " +
+                     "FROM [dbo].[udfFindStudentApplicationByHOD](?)";
+
+        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Student.class), email);
+    }
+
     public void updateStatus(int studentID, String status) {
 
         String sql1 = "SELECT [ApplicationStatusID] FROM [dbo].[Application_Status] WHERE [Status]=?";
