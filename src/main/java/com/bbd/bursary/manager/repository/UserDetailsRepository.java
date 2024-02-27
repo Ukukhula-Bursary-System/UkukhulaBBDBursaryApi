@@ -28,7 +28,9 @@ public class UserDetailsRepository {
                 email
         );
 
-        if (userList.size() != 1)
+        System.out.println(userList);
+
+        if (userList.isEmpty())
             return Optional.empty();
         return Optional.of(userList.getFirst());
     }
