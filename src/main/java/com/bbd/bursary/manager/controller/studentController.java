@@ -28,8 +28,8 @@ public class studentController {
     return new ResponseEntity<>(students, students.isEmpty()? HttpStatus.NO_CONTENT: HttpStatus.OK);
   }
 
-  @GetMapping("/all-applications/hod")
-  public ResponseEntity<?> AllStudentApplicationMadeByHOD(@PathParam("email") String email){
+  @GetMapping("/all-applications/hod/{email}")
+  public ResponseEntity<?> AllStudentApplicationMadeByHOD(@PathVariable("email") String email){
       if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
           return LoggedUser.unauthorizedResponse("/all/applications");
 
