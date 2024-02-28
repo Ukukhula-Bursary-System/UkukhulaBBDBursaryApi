@@ -2,10 +2,10 @@ package com.bbd.bursary.manager.model;
 
 public class Document {
 
-    int DocumentID;
-    String Transcript;
-    String IdentityDocument;
-    int BursaryApplicationID;
+    private int DocumentID;
+    private String Transcript;
+    private String IdentityDocument;
+    private long BursaryApplicationID;
 
     public int getDocumentID() {
         return DocumentID;
@@ -31,11 +31,11 @@ public class Document {
         IdentityDocument = identityDocument;
     }
 
-    public int getBursaryApplicationID() {
+    public long getBursaryApplicationID() {
         return BursaryApplicationID;
     }
 
-    public void setBursaryApplicationID(int bursaryApplicationID) {
+    public void setBursaryApplicationID(long bursaryApplicationID) {
         BursaryApplicationID = bursaryApplicationID;
     }
 }

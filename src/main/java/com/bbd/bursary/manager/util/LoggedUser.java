@@ -22,7 +22,7 @@ public class LoggedUser {
      public static ResponseEntity<?> unauthorizedResponse(String endpoint) {
           return new ResponseEntity<>(
                   unAuthorizeMessage(endpoint),
-                  HttpStatus.UNAUTHORIZED
+                  HttpStatus.FORBIDDEN
           );
      }
 
