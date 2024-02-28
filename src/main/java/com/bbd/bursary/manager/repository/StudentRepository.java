@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,33 @@ public class StudentRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public Optional<Student> findById(long id) {
+        String sql = "SELECT " +
+                     "      Application.[StudentID], Application.[FirstName], Application.[LastName], " +
+                     "      Application.[University], Application.[AverageMarks], Application.[BursaryAmount], " +
+                     "      Application.[Motivation], Application.[status], ContactDetails.[Email] " +
+                     "FROM  " +
+                     "      [dbo].[Student_Bursary_Application] Application " +
+                     "INNER JOIN " +
+                     "      [dbo].[Student] Student " +
+                     "ON " +
+                     "      Student.[StudentID] = Application.[StudentID] " +
+                     "INNER JOIN " +
+                     "      [dbo].[User_Details] UserDetails " +
+                     "ON " +
+                     "      Student.[UserID] = UserDetails.[UserID] " +
+                     "INNER JOIN " +
+                     "      [dbo].[Contact_Details] ContactDetails " +
+                     "ON " +
+                     "      ContactDetails.[ContactDetailsID] = UserDetails.[ContactDetailsID] " +
+                     "WHERE " +
+                     "      Student.[StudentID] = ? ";
+        List<Student> students = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Student.class), id);
+
+        if (students.isEmpty())
+            return Optional.empty();
+        return Optional.of(students.getFirst());
+    }
 
     public  List<Student> getAll() {
         String sql = "SELECT [StudentID], [FirstName], [LastName],[University],[AverageMarks], [BursaryAmount], [Motivation], [status] FROM  [dbo].[Student_Bursary_Application]";
@@ -44,16 +72,14 @@ public class StudentRepository {
         jdbcTemplate.update(sql2, statusID, studentID);
 
     }
+
     public Document getStudentDocuments(int BursaryApplicationStatusID) {
-        String sql =  "SLECT  [DocumentID] , [Trnsacript], [identityDocument] FROM [dbo].[Document] WHERE [BursaryApplicationStatusID] = ?";
+        String sql =  "SELECT  [DocumentID] , [Transcript], [IdentityDocument] FROM [dbo].[Document] WHERE [BursaryApplicationStatusID] = ?";
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Document.class), BursaryApplicationStatusID)
                 .stream()
                 .findFirst()
                 .orElse(null);
-
-
     }
-
 }
 
 
