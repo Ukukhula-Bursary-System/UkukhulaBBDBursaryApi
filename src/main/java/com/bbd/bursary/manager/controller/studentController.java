@@ -146,4 +146,37 @@ public class studentController {
                 HttpStatus.CREATED
         );
     }
+
+
+    @PostMapping("/newStudentApplication")
+    public ResponseEntity<?> saveStudentApplication(@RequestBody Student studentApplicationDTO) {
+        if (!LoggedUser.checkRole(List.of("Student")))
+            return LoggedUser.unauthorizedResponse("/studentApplication");
+
+        //check if student is in correct format
+        if (studentApplicationDTO.getFirstName() == null || studentApplicationDTO.getLastName() == null ||
+                studentApplicationDTO.getEmail() == null || studentApplicationDTO.getPhoneNumber() == null ||
+                studentApplicationDTO.getIdentityDocument() == 0 || studentApplicationDTO.getRace() == null ||
+                 studentApplicationDTO.getMotivation() == null || studentApplicationDTO.getAverageMarks() == 0 ||
+                studentApplicationDTO.getHeadOfDepartmentID() == 0 || studentApplicationDTO.getBursaryAmount()==0)
+                 {
+            return new ResponseEntity<>(
+                    Map.of("message", "Student application not in correct format"),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        try {
+            studentRepository.save(studentApplicationDTO);
+            return new ResponseEntity<>(
+                    Map.of("message", "Student application successfully saved!"),
+                    HttpStatus.CREATED
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    Map.of("message", "Failed to save student application"),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+    }
 }

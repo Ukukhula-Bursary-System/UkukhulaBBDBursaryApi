@@ -80,6 +80,39 @@ public class StudentRepository {
                 .findFirst()
                 .orElse(null);
     }
+
+    public  void save(Student student) {
+      String sql =  "EXEC [dbo].[addStudent] " +
+              "@FirstName = ?, " +
+              "@LastName = ?, " +
+              "@Email = ?, " +
+              "@phoneNumber = ?, " +
+              "@identiyNumber = ?, " +
+              "@race = ?, " +
+              "@role = ?, " +
+              "@motivation = ?, " +
+              "@averageMarks = ?, " +
+              "@Head_Of_DepartmentID = ?, " +
+              "@BursaryAmount = ?";
+
+        Object[] args = new Object[] {
+                student.getFirstName(),
+                student.getLastName(),
+                student.getEmail(),
+                student.getPhoneNumber(),
+                student.getIdentityDocument(),
+                student.getRace(),
+                "Student",
+                student.getMotivation(),
+                student.getAverageMarks(),
+                student.getHeadofdepartmentId(),
+                student.getBursaryAmount()
+        };
+
+        int updateCount = jdbcTemplate.update(sql, args);
+
+        if (updateCount == 0) throw new RuntimeException("Failed to save student!");
+    }
 }
 
 

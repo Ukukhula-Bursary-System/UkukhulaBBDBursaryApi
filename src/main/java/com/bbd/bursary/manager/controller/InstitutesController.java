@@ -5,8 +5,10 @@ import com.bbd.bursary.manager.dto.InstitutionFundAllocationDTO;
 import com.bbd.bursary.manager.exception.NotFoundException;
 import com.bbd.bursary.manager.model.InstituteInfo;
 import com.bbd.bursary.manager.model.InstitutionFundAllocation;
+import com.bbd.bursary.manager.model.Student;
 import com.bbd.bursary.manager.repository.InstituteInfoRepository;
 import com.bbd.bursary.manager.repository.InstitutionFundAllocationRepository;
+import com.bbd.bursary.manager.repository.StudentRepository;
 import com.bbd.bursary.manager.util.LoggedUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,6 +57,8 @@ public class InstitutesController {
             return new ResponseEntity<>(institutesByStatus, HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(institutesByStatus, HttpStatus.OK);
     }
+
+
 
     @PostMapping
     public ResponseEntity<?> saveInstitution(@RequestBody InstituteInfoDTO instituteInfoDTO) {

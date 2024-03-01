@@ -8,11 +8,11 @@ public class Student {
     private int identityDocument;
     private String phoneNumber;
     private String email;
-    private int race;
+    private String race;
     private int HeadofdepartmentId;
     private String Motivation;
     private int AverageMarks;
-    private String BursaryAmount;
+    private int BursaryAmount;
     private String Status;
 
     public long getStudentID() {
@@ -85,11 +85,11 @@ public class Student {
         this.email = email;
     }
 
-    public int getRace() {
+    public String getRace() {
         return race;
     }
 
-    public void setRace(int race) {
+    public void setRace(String race) {
         this.race = race;
     }
 
@@ -117,11 +117,11 @@ public class Student {
         AverageMarks = averageMarks;
     }
 
-    public String getBursaryAmount() {
+    public int getBursaryAmount() {
         return BursaryAmount;
     }
 
-    public void setBursaryAmount(String bursaryAmount) {
+    public void setBursaryAmount(int bursaryAmount) {
         BursaryAmount = bursaryAmount;
     }
 
@@ -131,6 +131,10 @@ public class Student {
 
     public void setStatus(String status) {
         Status = status;
+    }
+
+    public int getHeadOfDepartmentID() {
+        return  HeadofdepartmentId;
     }
 }
 
