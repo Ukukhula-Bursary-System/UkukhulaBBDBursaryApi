@@ -49,6 +49,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         if (!email.isEmpty()) {
             UserDetails user = userDetailsRepository.findByEmail(email)
                     .orElseThrow(() -> new AuthorizationServiceException("Email " + email + " not registered!"));
+
             SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
 
             JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(
