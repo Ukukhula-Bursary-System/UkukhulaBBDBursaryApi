@@ -28,10 +28,8 @@ public class UserDetailsRepository {
                 email
         );
 
-        System.out.println(userList);
-
         if (userList.isEmpty())
             return Optional.empty();
-        return Optional.of(userList.getFirst());
+        return Optional.of(userList.get(0));
     }
 }

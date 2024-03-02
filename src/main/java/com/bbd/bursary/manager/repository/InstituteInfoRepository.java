@@ -31,7 +31,7 @@ public class InstituteInfoRepository {
                 sql, BeanPropertyRowMapper.newInstance(InstituteInfo.class), id);
 
         if (instituteInfos.size() == 1)
-            return Optional.of(instituteInfos.getFirst());
+            return Optional.of(instituteInfos.get(0));
         return Optional.empty();
     }
 
@@ -52,7 +52,7 @@ public class InstituteInfoRepository {
 
         if (instituteId.isEmpty())
             return Optional.empty();
-        return Optional.of(instituteId.getFirst().getInstituteId());
+        return Optional.of(instituteId.get(0).getInstituteId());
     }
 
     public void save(InstituteInfoDTO instituteInfoDTO) throws SQLException {
