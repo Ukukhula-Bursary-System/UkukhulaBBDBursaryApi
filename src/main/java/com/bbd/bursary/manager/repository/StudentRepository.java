@@ -46,7 +46,7 @@ public class StudentRepository {
 
         if (students.isEmpty())
             return Optional.empty();
-        return Optional.of(students.getFirst());
+        return Optional.of(students.get(0));
     }
 
     public  List<Student> getAll() {

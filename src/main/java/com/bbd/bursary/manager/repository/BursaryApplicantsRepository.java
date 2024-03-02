@@ -38,6 +38,6 @@ public class BursaryApplicantsRepository {
 
         if (bursaryApplicants.isEmpty())
             return Optional.empty();
-        return Optional.of(bursaryApplicants.getFirst());
+        return Optional.of(bursaryApplicants.get(0));
     }
 }
