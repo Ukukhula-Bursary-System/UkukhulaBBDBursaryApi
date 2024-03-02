@@ -53,8 +53,8 @@ public class InstitutionFundAllocationRepository {
     }
 
     public void save(InstitutionFundAllocationDTO institutionFundAllocationDTO) throws SQLException {
-        String sql = "INSERT INTO [dbo].[Institution_Fund_Allocation] (AllocatedAmount, AllocatedRemainingAmount, InstituteID)" +
-                     " VALUES (?, ?, ?, [dbo].[udfGetBursaryFundId](YEAR(GETDATE())";
+        String sql = "INSERT INTO [dbo].[Institution_Fund_Allocation] (AllocatedAmount, AllocatedRemainingAmount, InstituteID, BursaryFundID)" +
+                     " VALUES (?, ?, ?, [dbo].[udfGetBursaryFundId](YEAR(GETDATE())))";
         Object[] args = new Object[] {
                 institutionFundAllocationDTO.getAllocatedAmount(),
                 institutionFundAllocationDTO.getAllocatedAmount(),
