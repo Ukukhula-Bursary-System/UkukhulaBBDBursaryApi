@@ -113,6 +113,11 @@ public class StudentRepository {
 
         if (updateCount == 0) throw new RuntimeException("Failed to save student!");
     }
+
+    public int getHodIdByEmail(String email) {
+        String sql = "select dbo.getHODIdByEmail(?)";
+        return jdbcTemplate.queryForObject(sql, Integer.class, email);
+    }
 }
 
 

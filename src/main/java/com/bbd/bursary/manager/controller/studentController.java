@@ -95,7 +95,6 @@ public class studentController {
         String linkForDocumentUpload;
         try {
             linkForDocumentUpload = ExpirationLink.generateLink(
-                "/document-upload",
                 student.get().getEmail()
             );
         } catch (UnknownHostException e) {
@@ -147,10 +146,20 @@ public class studentController {
         );
     }
 
+    @GetMapping("/getHodIdByEmail/{email}")
+    public ResponseEntity<?> getHodIdByEmail(@PathVariable("email") String email) {
+        if (!LoggedUser.checkRole(List.of("Admin")))
+            return LoggedUser.unauthorizedResponse("/getHodIdByEmail/{email}");
 
+        if (!LoggedUser.checkRole(List.of("Admin")))
+            return LoggedUser.unauthorizedResponse("/getHodIdByEmail/{email}");
+
+        int hodId = studentRepository.getHodIdByEmail(email);
+        return new ResponseEntity<>(hodId, HttpStatus.OK);
+    }
     @PostMapping("/newStudentApplication")
     public ResponseEntity<?> saveStudentApplication(@RequestBody Student studentApplicationDTO) {
-        if (!LoggedUser.checkRole(List.of("Student")))
+        if (!LoggedUser.checkRole(List.of("HOD")))
             return LoggedUser.unauthorizedResponse("/studentApplication");
 
         //check if student is in correct format

@@ -17,8 +17,9 @@ public class ExpirationLink {
 
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 48;
 
-    public static String generateLink(String endpoint, String email) throws UnknownHostException {
-        String baseUrl = InetAddress.getLocalHost().getHostAddress();
+    public static String generateLink(String email) throws UnknownHostException {
+
+        String baseUrl = "https://ukukhulabursaryfrontend.onrender.com";
         System.out.println(EXPIRATION_TIME);
         String token = Jwts.builder()
                            .setSubject(email)
@@ -26,7 +27,7 @@ public class ExpirationLink {
                            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                            .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                            .compact();
-        return baseUrl + endpoint + "/" + token;
+        return baseUrl + "/upload_document/?token=" + token;
     }
 
     public static String getEmail(String token) {
