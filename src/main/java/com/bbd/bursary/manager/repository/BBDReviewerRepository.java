@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+@Repository
 public class BBDReviewerRepository {
     private final JdbcTemplate jdbcTemplate;
 
@@ -17,7 +19,7 @@ public class BBDReviewerRepository {
     }
 
     public List<BBDReviewer> findAllReviewerStudents() {
-        String sql = "SELECT [firstName], [lastName] [bursaryAmount], [InstituteName], [Status], [BBDAdminID] FROM [dbo].[BursaryApplicantsView]";
+        String sql = "SELECT [firstName], [lastName] [bursaryAmount], [InstituteName], [Status], [BBDAdminID] FROM [dbo].[BursaryApplicantsV]";
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(BBDReviewer.class));
     }
 
