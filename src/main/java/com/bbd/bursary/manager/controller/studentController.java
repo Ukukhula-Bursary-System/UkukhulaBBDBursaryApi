@@ -148,8 +148,7 @@ public class studentController {
 
     @GetMapping("/getHodIdByEmail/{email}")
     public ResponseEntity<?> getHodIdByEmail(@PathVariable("email") String email) {
-        if (!LoggedUser.checkRole(List.of("HOD")))
-            return LoggedUser.unauthorizedResponse("/getHodIdByEmail/{email}");
+
         int hodId = studentRepository.getHodIdByEmail(email);
         return new ResponseEntity<>(hodId, HttpStatus.OK);
     }
