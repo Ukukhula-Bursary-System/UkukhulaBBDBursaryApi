@@ -13,6 +13,7 @@ public class Student {
     private String Motivation;
     private int AverageMarks;
     private int BursaryAmount;
+    private  String University;
     private String Status;
 
     public long getStudentID() {
@@ -31,7 +32,7 @@ public class Student {
         University = university;
     }
 
-    private  String University;
+
 
     // Default constructor
     public Student() {

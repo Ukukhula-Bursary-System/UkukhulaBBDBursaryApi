@@ -38,26 +38,26 @@ public class studentController {
     }
 
     @GetMapping("/all-applications")
-  public ResponseEntity<?> AllStudentApplication() {
-      if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
-          return LoggedUser.unauthorizedResponse("/all/applications");
+    public ResponseEntity<?> AllStudentApplication() {
+        if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
+            return LoggedUser.unauthorizedResponse("/all/applications");
 
-    List<Student> students = studentRepository.getAll();
+        List<Student> students = studentRepository.getAll();
 
-    return new ResponseEntity<>(students, students.isEmpty()? HttpStatus.NO_CONTENT: HttpStatus.OK);
-  }
+        return new ResponseEntity<>(students, students.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK);
+    }
 
-  @GetMapping("/all-applications/hod/{email}")
-  public ResponseEntity<?> AllStudentApplicationMadeByHOD(@PathVariable("email") String email){
-      if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
-          return LoggedUser.unauthorizedResponse("/all/applications");
+    @GetMapping("/all-applications/hod/{email}")
+    public ResponseEntity<?> AllStudentApplicationMadeByHOD(@PathVariable("email") String email) {
+        if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
+            return LoggedUser.unauthorizedResponse("/all/applications");
 
-      List<Student> students = studentRepository.findAllByHeadOfDepartmentEmail(email);
-      return new ResponseEntity<>(students, students.isEmpty()? HttpStatus.NO_CONTENT: HttpStatus.OK);
-  }
+        List<Student> students = studentRepository.findAllByHeadOfDepartmentEmail(email);
+        return new ResponseEntity<>(students, students.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK);
+    }
 
     @GetMapping("/all/{status}")
-     public ResponseEntity<?> AllFiltered(@PathVariable("status") String status) {
+    public ResponseEntity<?> AllFiltered(@PathVariable("status") String status) {
         if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
             return LoggedUser.unauthorizedResponse("/all/{status}");
 
@@ -65,7 +65,7 @@ public class studentController {
         students = students.stream()
                 .filter(student -> student.getStatus().equals(status))
                 .toList();
-        return new ResponseEntity<>(students, students.isEmpty()? HttpStatus.NO_CONTENT: HttpStatus.OK);
+        return new ResponseEntity<>(students, students.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK);
 
 
     }
@@ -88,26 +88,26 @@ public class studentController {
 
         if (student.isEmpty())
             return new ResponseEntity<>(
-                Map.of("message", "Student with id " + studentId + " not found!"),
-                HttpStatus.NOT_FOUND
+                    Map.of("message", "Student with id " + studentId + " not found!"),
+                    HttpStatus.NOT_FOUND
             );
 
         String linkForDocumentUpload;
         try {
             linkForDocumentUpload = ExpirationLink.generateLink(
-                "/document-upload",
-                student.get().getEmail()
+                    "/document-upload",
+                    student.get().getEmail()
             );
         } catch (UnknownHostException e) {
             return new ResponseEntity<>(
-                Map.of("message", "failed to create link!"),
-                HttpStatus.EXPECTATION_FAILED
+                    Map.of("message", "failed to create link!"),
+                    HttpStatus.EXPECTATION_FAILED
             );
         }
 
         return new ResponseEntity<>(
-            Map.of("link", linkForDocumentUpload),
-            HttpStatus.CREATED
+                Map.of("link", linkForDocumentUpload),
+                HttpStatus.CREATED
         );
     }
 
@@ -157,9 +157,8 @@ public class studentController {
         if (studentApplicationDTO.getFirstName() == null || studentApplicationDTO.getLastName() == null ||
                 studentApplicationDTO.getEmail() == null || studentApplicationDTO.getPhoneNumber() == null ||
                 studentApplicationDTO.getIdentityDocument() == 0 || studentApplicationDTO.getRace() == null ||
-                 studentApplicationDTO.getMotivation() == null || studentApplicationDTO.getAverageMarks() == 0 ||
-                studentApplicationDTO.getHeadOfDepartmentID() == 0 || studentApplicationDTO.getBursaryAmount()==0)
-                 {
+                studentApplicationDTO.getMotivation() == null || studentApplicationDTO.getAverageMarks() == 0 ||
+                studentApplicationDTO.getHeadOfDepartmentID() == 0 || studentApplicationDTO.getBursaryAmount() == 0) {
             return new ResponseEntity<>(
                     Map.of("message", "Student application not in correct format"),
                     HttpStatus.BAD_REQUEST
