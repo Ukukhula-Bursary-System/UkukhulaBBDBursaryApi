@@ -210,17 +210,24 @@ public class studentController {
         if (!LoggedUser.checkRole(List.of("Admin", "HOD", "Reviewer")))
             return LoggedUser.unauthorizedResponse("/update/{studentID}/{status}");
 
-        Optional<Document> document = documentRepository.findByStudentId(studentId);
+        try {
+            Optional<Document> document = documentRepository.findByStudentId(studentId);
 
-        if (document.isEmpty())
+            if (document.isEmpty())
+                return new ResponseEntity<>(
+                        Map.of("message", "Documents for student with id " + studentId + " not found"),
+                        HttpStatus.NOT_FOUND
+                );
+            return new ResponseEntity<>(
+                    document.get(),
+                    HttpStatus.OK
+            );
+        } catch (Exception e) {
             return new ResponseEntity<>(
                     Map.of("message", "Documents for student with id " + studentId + " not found"),
                     HttpStatus.NOT_FOUND
             );
-        return new ResponseEntity<>(
-                document.get(),
-                HttpStatus.OK
-        );
+        }
     }
 
     @GetMapping("/getHodIdByEmail/{email}")
