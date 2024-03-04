@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -50,26 +51,26 @@ public class studentController {
     }
 
     @GetMapping("/all-applications")
-  public ResponseEntity<?> AllStudentApplication() {
-      if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
-          return LoggedUser.unauthorizedResponse("/all/applications");
+    public ResponseEntity<?> AllStudentApplication() {
+        if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
+            return LoggedUser.unauthorizedResponse("/all/applications");
 
-    List<Student> students = studentRepository.getAll();
+        List<Student> students = studentRepository.getAll();
 
-    return new ResponseEntity<>(students, students.isEmpty()? HttpStatus.NO_CONTENT: HttpStatus.OK);
-  }
+        return new ResponseEntity<>(students, students.isEmpty()? HttpStatus.NO_CONTENT: HttpStatus.OK);
+    }
 
-  @GetMapping("/all-applications/hod/{email}")
-  public ResponseEntity<?> AllStudentApplicationMadeByHOD(@PathVariable("email") String email){
-      if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
-          return LoggedUser.unauthorizedResponse("/all/applications");
+    @GetMapping("/all-applications/hod/{email}")
+    public ResponseEntity<?> AllStudentApplicationMadeByHOD(@PathVariable("email") String email){
+        if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
+            return LoggedUser.unauthorizedResponse("/all/applications");
 
-      List<Student> students = studentRepository.findAllByHeadOfDepartmentEmail(email);
-      return new ResponseEntity<>(students, students.isEmpty()? HttpStatus.NO_CONTENT: HttpStatus.OK);
-  }
+        List<Student> students = studentRepository.findAllByHeadOfDepartmentEmail(email);
+        return new ResponseEntity<>(students, students.isEmpty()? HttpStatus.NO_CONTENT: HttpStatus.OK);
+    }
 
     @GetMapping("/all/{status}")
-     public ResponseEntity<?> AllFiltered(@PathVariable("status") String status) {
+    public ResponseEntity<?> AllFiltered(@PathVariable("status") String status) {
         if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
             return LoggedUser.unauthorizedResponse("/all/{status}");
 
@@ -100,22 +101,22 @@ public class studentController {
 
         if (studentOptional.isEmpty())
             return new ResponseEntity<>(
-                Map.of("message", "Student with id " + studentId + " not found!"),
-                HttpStatus.NOT_FOUND
+                    Map.of("message", "Student with id " + studentId + " not found!"),
+                    HttpStatus.NOT_FOUND
             );
 
         String linkForDocumentUpload;
         try {
             Student student = studentOptional.get();
             linkForDocumentUpload = ExpirationLink.generateLink(
-                student.getEmail()
+                    student.getEmail()
             );
             String emailMessage = String.format(
                     "Dear %s %s,\n\n" +
-                    "Please use the link below to upload the required documents for your BBD UKUKHULA bursary application:\n" +
-                    "%s\n\n" +
-                    "Kind Regards,\n" +
-                    "BBD Ukukhula Bursary Team",
+                            "Please use the link below to upload the required documents for your BBD UKUKHULA bursary application:\n" +
+                            "%s\n\n" +
+                            "Kind Regards,\n" +
+                            "BBD Ukukhula Bursary Team",
                     student.getFirstName(),
                     student.getLastName(),
                     linkForDocumentUpload
@@ -133,8 +134,8 @@ public class studentController {
         }
 
         return new ResponseEntity<>(
-            Map.of("link", linkForDocumentUpload),
-            HttpStatus.CREATED
+                Map.of("link", linkForDocumentUpload),
+                HttpStatus.CREATED
         );
     }
 
@@ -197,6 +198,13 @@ public class studentController {
             Resource file = fileStorageService.load(filename);
             return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                     "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+        } catch (MaxUploadSizeExceededException e) {
+            return new ResponseEntity<>(
+                    Map.of("message",
+                            "Failed to save file. The file is too large. Please ensure it is less than 2MB."
+                    ),
+                    HttpStatus.EXPECTATION_FAILED
+            );
         } catch (Exception e) {
             return new ResponseEntity<>(
                     Map.of("message", "failed to fetch file"),
