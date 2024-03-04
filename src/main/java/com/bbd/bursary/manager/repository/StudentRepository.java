@@ -54,6 +54,15 @@ public class StudentRepository {
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Student.class));
     }
 
+    public List<Student> getDetailedStudentInfo() {
+        String sql = "SELECT [StudentID],ID_Number,[Email],[PhoneNumber], [FirstName]," +
+                " [LastName], " +
+                " University,AverageMarks," +
+                " [BursaryAmount], [Motivation], [Status], [HeadOfDepartmentID]" +
+                "  FROM [dbo].[GetFullStudentDetails]";
+        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Student.class));
+    }
+
     public List<Student> findAllByHeadOfDepartmentEmail(String email) {
         String sql = "SELECT " +
                      "  [StudentID], [FirstName], [LastName], [University], " +

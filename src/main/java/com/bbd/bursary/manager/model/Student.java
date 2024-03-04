@@ -4,6 +4,16 @@ package com.bbd.bursary.manager.model;
 public class Student {
     private long studentID;
     private String firstName;
+    private int ID_Number;
+
+    public int getID_Number() {
+        return ID_Number;
+    }
+
+    public void setID_Number(int ID_Number) {
+        this.ID_Number = ID_Number;
+    }
+
     private String lastName;
     private String identityDocument;
     private String phoneNumber;

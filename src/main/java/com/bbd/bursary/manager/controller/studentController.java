@@ -134,6 +134,24 @@ public class studentController {
         );
     }
 
+
+    @GetMapping("/get-student-application/{studentId}")
+    public ResponseEntity<?> getStudentApplication(@PathVariable("studentId") long studentId) {
+        if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
+            return LoggedUser.unauthorizedResponse("/get-student-application/{studentId}");
+
+        Optional<Student> studentOptional = studentRepository.findById(studentId);
+        if (studentOptional.isEmpty())
+            return new ResponseEntity<>(
+                    Map.of("message", "Student with id " + studentId + " not found!"),
+                    HttpStatus.NOT_FOUND
+            );
+        return new ResponseEntity<>(
+                studentOptional.get(),
+                HttpStatus.OK
+        );
+    }
+
     @PostMapping("/document-upload/{token}")
     public ResponseEntity<?> uploadStudentDocuments(@PathVariable("token") String token,
                                                     @RequestBody Document document,
