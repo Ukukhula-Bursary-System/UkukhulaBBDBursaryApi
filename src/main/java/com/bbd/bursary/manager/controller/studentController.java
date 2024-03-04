@@ -11,6 +11,8 @@ import com.bbd.bursary.manager.service.FileStorageService;
 import com.bbd.bursary.manager.util.ExpirationLink;
 import com.bbd.bursary.manager.util.LoggedUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -182,6 +185,41 @@ public class studentController {
         return new ResponseEntity<>(
                 Map.of("message", "Documents successfully uploaded"),
                 HttpStatus.CREATED
+        );
+    }
+
+    @GetMapping("/file/{filename}")
+    public ResponseEntity<?> getStudentApplicationFile(@PathVariable("filename") String filename) {
+        if (!LoggedUser.checkRole(List.of("Admin", "HOD", "Reviewer")))
+            return LoggedUser.unauthorizedResponse("/update/{studentID}/{status}");
+
+        try {
+            Resource file = fileStorageService.load(filename);
+            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    Map.of("message", "failed to fetch file"),
+                    HttpStatus.EXPECTATION_FAILED
+            );
+        }
+    }
+
+    @GetMapping("/documents/{studentId}")
+    public ResponseEntity<?> getStudentDocumentsLocation(@PathVariable("studentId") long studentId) {
+        if (!LoggedUser.checkRole(List.of("Admin", "HOD", "Reviewer")))
+            return LoggedUser.unauthorizedResponse("/update/{studentID}/{status}");
+
+        Optional<Document> document = documentRepository.findByStudentId(studentId);
+
+        if (document.isEmpty())
+            return new ResponseEntity<>(
+                    Map.of("message", "Documents for student with id " + studentId + " not found"),
+                    HttpStatus.NOT_FOUND
+            );
+        return new ResponseEntity<>(
+                document.get(),
+                HttpStatus.OK
         );
     }
 
