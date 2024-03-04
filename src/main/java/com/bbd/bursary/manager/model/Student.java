@@ -8,13 +8,14 @@ public class Student {
     private String identityDocument;
     private String phoneNumber;
     private String email;
-    private String race;
+    private long instituteId;
+    private int race;
     private int headOfDepartmentId;
     private String motivation;
     private int averageMarks;
     private int bursaryAmount;
     private String status;
-    private  String University;
+    private String University;
 
     public long getStudentID() {
         return studentID;
@@ -64,20 +65,20 @@ public class Student {
         this.email = email;
     }
 
-    public String getRace() {
+    public int getRace() {
         return race;
     }
 
-    public void setRace(String race) {
+    public void setRace(int race) {
         this.race = race;
     }
 
-    public int getHeadofdepartmentId() {
+    public int getHeadOfDepartmentId() {
         return headOfDepartmentId;
     }
 
-    public void setHeadofdepartmentId(int headofdepartmentId) {
-        this.headOfDepartmentId = headofdepartmentId;
+    public void setHeadOfDepartmentId(int headOfDepartmentId) {
+        this.headOfDepartmentId = headOfDepartmentId;
     }
 
     public String getMotivation() {
@@ -118,6 +119,33 @@ public class Student {
 
     public void setUniversity(String university) {
         University = university;
+    }
+
+    public long getInstituteId() {
+        return instituteId;
+    }
+
+    public void setInstituteId(long instituteId) {
+        this.instituteId = instituteId;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "studentID=" + studentID +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", identityDocument='" + identityDocument + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", race='" + race + '\'' +
+                ", headOfDepartmentId=" + headOfDepartmentId +
+                ", motivation='" + motivation + '\'' +
+                ", averageMarks=" + averageMarks +
+                ", bursaryAmount=" + bursaryAmount +
+                ", status='" + status + '\'' +
+                ", University='" + University + '\'' +
+                '}';
     }
 }
 

@@ -26,13 +26,11 @@ public class ExpirationLink {
                 .compact();
     }
 
-
     public static String generateLink(String email) throws UnknownHostException {
 
         String baseUrl = "https://ukukhulabursaryfrontend.onrender.com";
-        System.out.println(EXPIRATION_TIME);
         String token = generateToken(email);
-        return baseUrl + "/upload_document/?token=" + token;
+        return baseUrl + "/upload_documents?token=" + token;
     }
 
     public static String getEmail(String token) {

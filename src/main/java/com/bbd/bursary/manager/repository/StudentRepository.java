@@ -82,31 +82,31 @@ public class StudentRepository {
     }
 
     public  void save(Student student) {
-      String sql =  "EXEC [dbo].[addStudent] " +
-              "@FirstName = ?, " +
-              "@LastName = ?, " +
-              "@Email = ?, " +
-              "@phoneNumber = ?, " +
-              "@identiyNumber = ?, " +
-              "@race = ?, " +
-              "@role = ?, " +
-              "@motivation = ?, " +
-              "@averageMarks = ?, " +
-              "@Head_Of_DepartmentID = ?, " +
-              "@BursaryAmount = ?";
+      String sql = "EXEC [dbo].[uspSaveStudent] " +
+                   "@FirstName = ?, " +
+                   "@LastName = ?, " +
+                   "@PhoneNumber = ?, " +
+                   "@Email = ?, " +
+                   "@InstituteID = ?, " +
+                   "@IDNumber = ?, " +
+                   "@RaceID = ?, " +
+                   "@BursaryAmount = ?, " +
+                   "@AverageMarks = ?, " +
+                   "@Motivation = ?, " +
+                   "@HeadOfDepartmentID = ?";
 
         Object[] args = new Object[] {
                 student.getFirstName(),
                 student.getLastName(),
-                student.getEmail(),
                 student.getPhoneNumber(),
+                student.getEmail(),
+                student.getInstituteId(),
                 student.getIdentityDocument(),
                 student.getRace(),
-                "Student",
-                student.getMotivation(),
+                student.getBursaryAmount(),
                 student.getAverageMarks(),
-                student.getHeadofdepartmentId(),
-                student.getBursaryAmount()
+                student.getMotivation(),
+                student.getHeadOfDepartmentId()
         };
 
         int updateCount = jdbcTemplate.update(sql, args);

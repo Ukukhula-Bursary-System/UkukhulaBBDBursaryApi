@@ -109,7 +109,7 @@ public class studentController {
             String emailMessage = String.format(
                     "Dear %s %s,\n\n" +
                     "Please use the link below to upload the required documents for your BBD UKUKHULA bursary application:\n" +
-                    "%s\n" +
+                    "%s\n\n" +
                     "Kind Regards,\n" +
                     "BBD Ukukhula Bursary Team",
                     student.getFirstName(),
@@ -184,25 +184,12 @@ public class studentController {
         int hodId = studentRepository.getHodIdByEmail(email);
         return new ResponseEntity<>(hodId, HttpStatus.OK);
     }
+
     @PostMapping("/newStudentApplication")
     public ResponseEntity<?> saveStudentApplication(@RequestBody Student studentApplicationDTO) {
 
         if (!LoggedUser.checkRole(List.of("HOD")))
             return LoggedUser.unauthorizedResponse("/studentApplication");
-        System.out.println(studentApplicationDTO.getFirstName());
-        //check if student is in correct format
-
-//        if (studentApplicationDTO.getFirstName() == null || studentApplicationDTO.getLastName() == null ||
-//                studentApplicationDTO.getEmail() == null || studentApplicationDTO.getPhoneNumber() == null ||
-//                studentApplicationDTO.getIdentityDocument() == null || studentApplicationDTO.getRace() == null ||
-//                 studentApplicationDTO.getMotivation() == null ||
-//                studentApplicationDTO.getHeadOfDepartmentID() == 0 || studentApplicationDTO.getBursaryAmount()==0)
-//                 {
-//            return new ResponseEntity<>(
-//                    Map.of("message", "Student application not in correct format"),
-//                    HttpStatus.BAD_REQUEST
-//            );
-//        }
 
         try {
             studentRepository.save(studentApplicationDTO);
