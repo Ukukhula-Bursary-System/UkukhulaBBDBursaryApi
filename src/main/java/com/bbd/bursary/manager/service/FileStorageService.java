@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 
 @Service
 public class FileStorageService {
@@ -26,7 +27,10 @@ public class FileStorageService {
     }
 
     public String save(MultipartFile file) throws IOException {
-        String tokenizedFileName = ExpirationLink.generateToken(file.getOriginalFilename());
+        String tokenizedFileName = ExpirationLink.generateToken(
+                file.getOriginalFilename() +
+                        System.currentTimeMillis()).replace('.', '_') +
+                "." + file.getContentType().split("/")[1];
         Files.copy(file.getInputStream(), FILE_STORAGE_LOCATION.resolve(tokenizedFileName));
         return tokenizedFileName;
     }

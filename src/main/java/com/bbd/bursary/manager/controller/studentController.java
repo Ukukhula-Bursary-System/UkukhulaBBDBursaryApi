@@ -12,6 +12,7 @@ import com.bbd.bursary.manager.util.ExpirationLink;
 import com.bbd.bursary.manager.util.LoggedUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -134,11 +135,11 @@ public class studentController {
         );
     }
 
-    @PostMapping("/document-upload/{token}")
+    @PostMapping(value = "/document-upload/{token}")
     public ResponseEntity<?> uploadStudentDocuments(@PathVariable("token") String token,
-                                                    @RequestBody Document document,
-                                                    @RequestParam("transcript") MultipartFile transcript,
-                                                    @RequestParam("identityDocument") MultipartFile identityDocument) {
+                                                    @RequestParam("Transcript") MultipartFile transcript,
+                                                    @RequestParam("IdentityDocument") MultipartFile identityDocument) {
+        Document document = new Document();
         if (!ExpirationLink.isLinkValid(token))
             return new ResponseEntity<>(
                     Map.of("message", "link has expired!"),
@@ -156,6 +157,12 @@ public class studentController {
                     HttpStatus.BAD_REQUEST
             );
 
+        if (!bursaryApplication.get().getStatus().equalsIgnoreCase("documents"))
+            return new ResponseEntity<>(
+                    Map.of("message", "Documents have already been uploaded."),
+                    HttpStatus.BAD_REQUEST
+            );
+
         try {
             String transcriptLocation = fileStorageService.save(transcript);
             String identityDocumentLocation = fileStorageService.save(identityDocument);
@@ -165,6 +172,7 @@ public class studentController {
             document.setIdentityDocument(identityDocumentLocation);
 
             documentRepository.save(document);
+            bursaryApplicantsRepository.updateStatusToPending(bursaryApplication.get().getBursaryApplicantId());
         } catch (SQLException | IOException e) {
             return new ResponseEntity<>(
                     Map.of("message", "Failed to upload documents"),
