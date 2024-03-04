@@ -10,6 +10,7 @@ import com.bbd.bursary.manager.repository.InstituteInfoRepository;
 import com.bbd.bursary.manager.repository.InstitutionFundAllocationRepository;
 import com.bbd.bursary.manager.repository.StudentRepository;
 import com.bbd.bursary.manager.util.LoggedUser;
+import com.microsoft.sqlserver.jdbc.SQLServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -131,7 +132,12 @@ public class InstitutesController {
             );
         } catch (SQLException e) {
             return new ResponseEntity<>(
-                    Map.of("message", e.getMessage()),
+                    Map.of("message", "Failed to allocate institute funding"),
+                    HttpStatus.BAD_REQUEST
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    Map.of("message", "The allocation from the Institute fund cannot exceed the remaining bursary fund amount."),
                     HttpStatus.BAD_REQUEST
             );
         }

@@ -40,4 +40,9 @@ public class BursaryApplicantsRepository {
             return Optional.empty();
         return Optional.of(bursaryApplicants.get(0));
     }
+
+    public void updateStatusToPending(long bursaryApplicantsId) {
+        String sql = "UPDATE [dbo].[Bursary_Applicants] SET [BursaryApplicationStatusID] = 1  WHERE [BursaryApplicantID] = ?";
+        jdbcTemplate.update(sql, bursaryApplicantsId);
+    }
 }

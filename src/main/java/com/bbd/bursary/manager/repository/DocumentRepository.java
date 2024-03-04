@@ -2,10 +2,14 @@ package com.bbd.bursary.manager.repository;
 
 import com.bbd.bursary.manager.model.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class DocumentRepository {
@@ -30,5 +34,24 @@ public class DocumentRepository {
 
         if (updateCount < 1)
             throw new SQLException("Saving documents failed!");
+    }
+
+    public Optional<Document> findByStudentId(long studentId) {
+        String sql = "SELECT " +
+                     "  [Transcript], " +
+                     "  [IdentityDocument] " +
+                     "FROM " +
+                     "  [dbo].[Document] Document " +
+                     "INNER JOIN " +
+                     "  [dbo].[Bursary_Applicants] BursaryApplicants " +
+                     "ON " +
+                     "  Document.[BursaryApplicantID] = BursaryApplicants.[BursaryApplicantID] " +
+                     "WHERE " +
+                     "  [StudentID] = ?";
+        List<Document> documents = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Document.class), studentId);
+
+        if (documents.isEmpty())
+            return Optional.empty();
+        return Optional.of(documents.get(0));
     }
 }
