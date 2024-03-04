@@ -18,9 +18,9 @@ public class BBDReviewerRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<BBDReviewer> findAllReviewerStudents() {
-        String sql = "SELECT [firstName], [lastName] [bursaryAmount], [InstituteName], [Status], [BBDAdminID] FROM [dbo].[BursaryApplicantsV]";
-        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(BBDReviewer.class));
+    public List<BBDReviewer> findAllReviewerStudents(String email) {
+        String sql = "SELECT [bursaryAmount], [status], [firstName], [lastName], [instituteName], [BBDAdminID] FROM [dbo].[prGetBursaryApplicantsByEmail] WHERE [email] = ?";
+        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(BBDReviewer.class), email);
     }
 
     public void updateStatus(long studentID, String status) {

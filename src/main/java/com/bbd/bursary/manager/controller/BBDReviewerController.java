@@ -21,9 +21,10 @@ public class BBDReviewerController {
         this.bbdReviewerRepository = bbdReviewerRepository;
     }
 
-    @GetMapping
-    public ResponseEntity<List<BBDReviewer>> findAll() {
-        List<BBDReviewer> students = bbdReviewerRepository.findAllReviewerStudents();
+
+    @GetMapping("/{email}")
+    public ResponseEntity<List<BBDReviewer>> findAll(@PathVariable("email") String email) {
+        List<BBDReviewer> students = bbdReviewerRepository.findAllReviewerStudents(email);
 
         if (students.isEmpty())
             return new ResponseEntity<>(
