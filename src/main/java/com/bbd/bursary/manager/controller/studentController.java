@@ -6,14 +6,17 @@ import com.bbd.bursary.manager.model.Student;
 import com.bbd.bursary.manager.repository.BursaryApplicantsRepository;
 import com.bbd.bursary.manager.repository.DocumentRepository;
 import com.bbd.bursary.manager.repository.StudentRepository;
+import com.bbd.bursary.manager.service.EmailService;
+import com.bbd.bursary.manager.service.FileStorageService;
 import com.bbd.bursary.manager.util.ExpirationLink;
 import com.bbd.bursary.manager.util.LoggedUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.net.UnknownHostException;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -27,14 +30,19 @@ public class studentController {
     private final StudentRepository studentRepository;
     private final BursaryApplicantsRepository bursaryApplicantsRepository;
     private final DocumentRepository documentRepository;
+    private final EmailService emailService;
+    private final FileStorageService fileStorageService;
 
     @Autowired
     public studentController(StudentRepository studentRepository,
                              BursaryApplicantsRepository bursaryApplicantsRepository,
-                             DocumentRepository documentRepository) {
+                             DocumentRepository documentRepository,
+                             EmailService emailService, FileStorageService fileStorageService) {
         this.studentRepository = studentRepository;
         this.bursaryApplicantsRepository = bursaryApplicantsRepository;
         this.documentRepository = documentRepository;
+        this.emailService = emailService;
+        this.fileStorageService = fileStorageService;
     }
 
     @GetMapping("/all-applications")
@@ -84,9 +92,9 @@ public class studentController {
         if (!LoggedUser.checkRole(List.of("Admin", "HOD")))
             return LoggedUser.unauthorizedResponse("/update/{studentID}/{status}");
 
-        Optional<Student> student = studentRepository.findById(studentId);
+        Optional<Student> studentOptional = studentRepository.findById(studentId);
 
-        if (student.isEmpty())
+        if (studentOptional.isEmpty())
             return new ResponseEntity<>(
                 Map.of("message", "Student with id " + studentId + " not found!"),
                 HttpStatus.NOT_FOUND
@@ -94,13 +102,29 @@ public class studentController {
 
         String linkForDocumentUpload;
         try {
+            Student student = studentOptional.get();
             linkForDocumentUpload = ExpirationLink.generateLink(
-                student.get().getEmail()
+                student.getEmail()
             );
-        } catch (UnknownHostException e) {
+            String emailMessage = String.format(
+                    "Dear %s %s,\n\n" +
+                    "Please use the link below to upload the required documents for your BBD UKUKHULA bursary application:\n" +
+                    "%s\n" +
+                    "Kind Regards,\n" +
+                    "BBD Ukukhula Bursary Team",
+                    student.getFirstName(),
+                    student.getLastName(),
+                    linkForDocumentUpload
+            );
+            emailService.sendEmail(
+                    student.getEmail(),
+                    "BBD UkukhulaBursary Documents Upload",
+                    emailMessage
+            );
+        } catch (Exception e) {
             return new ResponseEntity<>(
-                Map.of("message", "failed to create link!"),
-                HttpStatus.EXPECTATION_FAILED
+                    Map.of("message", "Failed to create link. Please try again."),
+                    HttpStatus.EXPECTATION_FAILED
             );
         }
 
@@ -112,7 +136,9 @@ public class studentController {
 
     @PostMapping("/document-upload/{token}")
     public ResponseEntity<?> uploadStudentDocuments(@PathVariable("token") String token,
-                                                    @RequestBody Document document) {
+                                                    @RequestBody Document document,
+                                                    @RequestParam("transcript") MultipartFile transcript,
+                                                    @RequestParam("identityDocument") MultipartFile identityDocument) {
         if (!ExpirationLink.isLinkValid(token))
             return new ResponseEntity<>(
                     Map.of("message", "link has expired!"),
@@ -130,11 +156,16 @@ public class studentController {
                     HttpStatus.BAD_REQUEST
             );
 
-        document.setBursaryApplicationID(bursaryApplication.get().getBursaryApplicantId());
-
         try {
+            String transcriptLocation = fileStorageService.save(transcript);
+            String identityDocumentLocation = fileStorageService.save(identityDocument);
+
+            document.setBursaryApplicationID(bursaryApplication.get().getBursaryApplicantId());
+            document.setTranscript(transcriptLocation);
+            document.setIdentityDocument(identityDocumentLocation);
+
             documentRepository.save(document);
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             return new ResponseEntity<>(
                     Map.of("message", "Failed to upload documents"),
                     HttpStatus.EXPECTATION_FAILED

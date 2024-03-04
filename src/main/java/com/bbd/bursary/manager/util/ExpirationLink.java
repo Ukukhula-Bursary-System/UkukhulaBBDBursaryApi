@@ -17,16 +17,21 @@ public class ExpirationLink {
 
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 48;
 
+    public static String generateToken(String subject) {
+        return Jwts.builder()
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+
     public static String generateLink(String email) throws UnknownHostException {
 
         String baseUrl = "https://ukukhulabursaryfrontend.onrender.com";
         System.out.println(EXPIRATION_TIME);
-        String token = Jwts.builder()
-                           .setSubject(email)
-                           .setIssuedAt(new Date(System.currentTimeMillis()))
-                           .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                           .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                           .compact();
+        String token = generateToken(email);
         return baseUrl + "/upload_document/?token=" + token;
     }
 
