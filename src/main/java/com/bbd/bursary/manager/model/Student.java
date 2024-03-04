@@ -2,47 +2,26 @@ package com.bbd.bursary.manager.model;
 
 
 public class Student {
-    private long StudentID;
+    private long studentID;
     private String firstName;
     private String lastName;
-    private int identityDocument;
+    private String identityDocument;
     private String phoneNumber;
     private String email;
     private String race;
-    private int HeadofdepartmentId;
-    private String Motivation;
-    private int AverageMarks;
-    private int BursaryAmount;
-    private String Status;
+    private int headOfDepartmentId;
+    private String motivation;
+    private int averageMarks;
+    private int bursaryAmount;
+    private String status;
+    private  String University;
 
     public long getStudentID() {
-        return StudentID;
+        return studentID;
     }
 
     public void setStudentID(long studentID) {
-        StudentID = studentID;
-    }
-
-    public String getUniversity() {
-        return University;
-    }
-
-    public void setUniversity(String university) {
-        University = university;
-    }
-
-    private  String University;
-
-    // Default constructor
-    public Student() {
-    }
-
-    public long getStudentId() {
-        return StudentID;
-    }
-
-    public void setStudentId(long studentId) {
-        this.StudentID = studentId;
+        this.studentID = studentID;
     }
 
     public String getFirstName() {
@@ -61,11 +40,11 @@ public class Student {
         this.lastName = lastName;
     }
 
-    public int getIdentityDocument() {
+    public String getIdentityDocument() {
         return identityDocument;
     }
 
-    public void setIdentityDocument(int identityDocument) {
+    public void setIdentityDocument(String identityDocument) {
         this.identityDocument = identityDocument;
     }
 
@@ -94,47 +73,51 @@ public class Student {
     }
 
     public int getHeadofdepartmentId() {
-        return HeadofdepartmentId;
+        return headOfDepartmentId;
     }
 
     public void setHeadofdepartmentId(int headofdepartmentId) {
-        HeadofdepartmentId = headofdepartmentId;
+        this.headOfDepartmentId = headofdepartmentId;
     }
 
     public String getMotivation() {
-        return Motivation;
+        return motivation;
     }
 
     public void setMotivation(String motivation) {
-        Motivation = motivation;
+        this.motivation = motivation;
     }
 
     public int getAverageMarks() {
-        return AverageMarks;
+        return averageMarks;
     }
 
     public void setAverageMarks(int averageMarks) {
-        AverageMarks = averageMarks;
+        this.averageMarks = averageMarks;
     }
 
     public int getBursaryAmount() {
-        return BursaryAmount;
+        return bursaryAmount;
     }
 
     public void setBursaryAmount(int bursaryAmount) {
-        BursaryAmount = bursaryAmount;
+        this.bursaryAmount = bursaryAmount;
     }
 
     public String getStatus() {
-        return Status;
+        return status;
     }
 
     public void setStatus(String status) {
-        Status = status;
+        this.status = status;
     }
 
-    public int getHeadOfDepartmentID() {
-        return  HeadofdepartmentId;
+    public String getUniversity() {
+        return University;
+    }
+
+    public void setUniversity(String university) {
+        University = university;
     }
 }
 
