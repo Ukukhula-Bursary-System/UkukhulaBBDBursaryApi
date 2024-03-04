@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -197,6 +198,13 @@ public class studentController {
             Resource file = fileStorageService.load(filename);
             return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                     "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+        } catch (MaxUploadSizeExceededException e) {
+            return new ResponseEntity<>(
+                    Map.of("message",
+                            "Failed to save file. The file is too large. Please ensure it is less than 2MB."
+                    ),
+                    HttpStatus.EXPECTATION_FAILED
+            );
         } catch (Exception e) {
             return new ResponseEntity<>(
                     Map.of("message", "failed to fetch file"),

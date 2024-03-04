@@ -1,6 +1,7 @@
 package com.bbd.bursary.manager.service;
 
 import com.bbd.bursary.manager.util.ExpirationLink;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -11,18 +12,22 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 
+@Slf4j
 @Service
 public class FileStorageService {
 
     private final Path FILE_STORAGE_LOCATION = Paths.get("uploads");
 
+    public FileStorageService() {
+        createFileStorageDirectory();
+    }
+
     public void createFileStorageDirectory() {
         try {
             Files.createDirectories(FILE_STORAGE_LOCATION);
         } catch (IOException e) {
-            System.out.println("Directory already exists");
+            log.info("File upload directory already exists.");
         }
     }
 
