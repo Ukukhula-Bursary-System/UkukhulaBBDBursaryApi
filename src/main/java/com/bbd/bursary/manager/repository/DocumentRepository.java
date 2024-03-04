@@ -41,11 +41,11 @@ public class DocumentRepository {
                      "  [Transcript], " +
                      "  [IdentityDocument] " +
                      "FROM " +
-                     "  [dbo].[Document] Document" +
+                     "  [dbo].[Document] Document " +
                      "INNER JOIN " +
-                     "  [dbo].[Bursary_Applicants] BursaryApplicants" +
+                     "  [dbo].[Bursary_Applicants] BursaryApplicants " +
                      "ON " +
-                     "  Document.[BursaryApplicantID] = BursaryApplicants.[BursaryApplicantsID] " +
+                     "  Document.[BursaryApplicantID] = BursaryApplicants.[BursaryApplicantID] " +
                      "WHERE " +
                      "  [StudentID] = ?";
         List<Document> documents = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Document.class), studentId);
