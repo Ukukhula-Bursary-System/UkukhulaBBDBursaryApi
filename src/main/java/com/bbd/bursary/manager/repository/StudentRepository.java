@@ -65,10 +65,24 @@ public class StudentRepository {
 
     public List<Student> findAllByHeadOfDepartmentEmail(String email) {
         String sql = "SELECT " +
-                     "  [StudentID], [FirstName], [LastName], [University], " +
-                     "  [AverageMarks], [BursaryAmount], [Motivation], " +
-                     "  [status], [HeadOfDepartmentID] " +
-                     "FROM [dbo].[udfFindStudentApplicationByHOD](?)";
+                     "  udfStudent.[StudentID], udfStudent.[FirstName], udfStudent.[LastName], udfStudent.[University], " +
+                     "  udfStudent.[AverageMarks], udfStudent.[BursaryAmount], udfStudent.[Motivation], " +
+                     "  udfStudent.[status], udfStudent.[HeadOfDepartmentID], " +
+                     "  Student.[ID_Number] AS [IdentityDocument], ContactDetails.[Email], ContactDetails.[PhoneNumber]" +
+                     "FROM " +
+                     "  [dbo].[udfFindStudentApplicationByHOD](?) udfStudent " +
+                     "INNER JOIN " +
+                     "  [dbo].[Student] Student " +
+                     "ON    " +
+                     "  udfStudent.[StudentID] = Student.[StudentID] " +
+                     "INNER JOIN " +
+                     "  [dbo].[User_Details] UserDetails " +
+                     "ON " +
+                     "  Student.[UserID] = UserDetails.[UserID] " +
+                     "INNER JOIN " +
+                     "  [dbo].[Contact_Details] ContactDetails " +
+                     "ON " +
+                     "  UserDetails.[ContactDetailsID] = ContactDetails.[ContactDetailsID] ";
 
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Student.class), email);
     }

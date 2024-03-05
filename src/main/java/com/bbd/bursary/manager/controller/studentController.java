@@ -161,12 +161,6 @@ public class studentController {
                     HttpStatus.BAD_REQUEST
             );
 
-        if (!bursaryApplication.get().getStatus().equalsIgnoreCase("documents"))
-            return new ResponseEntity<>(
-                    Map.of("message", "Documents have already been uploaded."),
-                    HttpStatus.BAD_REQUEST
-            );
-
         try {
             String transcriptLocation = fileStorageService.save(transcript);
             String identityDocumentLocation = fileStorageService.save(identityDocument);
