@@ -50,7 +50,25 @@ public class StudentRepository {
     }
 
     public  List<Student> getAll() {
-        String sql = "SELECT [StudentID], [FirstName], [LastName],[University],[AverageMarks], [BursaryAmount], [Motivation], [status] FROM  [dbo].[Student_Bursary_Application]";
+        String sql = "SELECT " +
+                     "  vStudentBursary.[StudentID], vStudentBursary.[FirstName], vStudentBursary.[LastName]," +
+                     "  vStudentBursary.[University], vStudentBursary.[AverageMarks], vStudentBursary.[BursaryAmount], " +
+                     "  vStudentBursary.[Motivation], vStudentBursary.[status], " +
+                     "  Student.[ID_Number] AS [IdentityDocument], ContactDetails.[Email], ContactDetails.[PhoneNumber] " +
+                     "FROM  " +
+                     "  [dbo].[Student_Bursary_Application] vStudentBursary " +
+                     "INNER JOIN " +
+                     "  [dbo].[Student] Student " +
+                     "ON    " +
+                     "  vStudentBursary.[StudentID] = Student.[StudentID] " +
+                     "INNER JOIN " +
+                     "  [dbo].[User_Details] UserDetails " +
+                     "ON " +
+                     "  Student.[UserID] = UserDetails.[UserID] " +
+                     "INNER JOIN " +
+                     "  [dbo].[Contact_Details] ContactDetails " +
+                     "ON " +
+                     "  UserDetails.[ContactDetailsID] = ContactDetails.[ContactDetailsID] ";
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Student.class));
     }
 
@@ -68,7 +86,7 @@ public class StudentRepository {
                      "  udfStudent.[StudentID], udfStudent.[FirstName], udfStudent.[LastName], udfStudent.[University], " +
                      "  udfStudent.[AverageMarks], udfStudent.[BursaryAmount], udfStudent.[Motivation], " +
                      "  udfStudent.[status], udfStudent.[HeadOfDepartmentID], " +
-                     "  Student.[ID_Number] AS [IdentityDocument], ContactDetails.[Email], ContactDetails.[PhoneNumber]" +
+                     "  Student.[ID_Number] AS [IdentityDocument], ContactDetails.[Email], ContactDetails.[PhoneNumber] " +
                      "FROM " +
                      "  [dbo].[udfFindStudentApplicationByHOD](?) udfStudent " +
                      "INNER JOIN " +
