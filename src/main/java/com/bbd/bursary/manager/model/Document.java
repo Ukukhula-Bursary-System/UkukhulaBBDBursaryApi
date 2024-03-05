@@ -2,17 +2,17 @@ package com.bbd.bursary.manager.model;
 
 public class Document {
 
-    private int DocumentID;
+    private int documentId;
     private String Transcript;
     private String IdentityDocument;
     private long BursaryApplicationID;
 
-    public int getDocumentID() {
-        return DocumentID;
+    public int getDocumentId() {
+        return documentId;
     }
 
-    public void setDocumentID(int documentID) {
-        DocumentID = documentID;
+    public void setDocumentId(int documentId) {
+        this.documentId = documentId;
     }
 
     public String getTranscript() {

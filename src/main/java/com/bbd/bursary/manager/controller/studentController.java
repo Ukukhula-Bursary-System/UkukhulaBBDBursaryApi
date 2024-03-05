@@ -143,7 +143,6 @@ public class studentController {
     public ResponseEntity<?> uploadStudentDocuments(@PathVariable("token") String token,
                                                     @RequestParam("Transcript") MultipartFile transcript,
                                                     @RequestParam("IdentityDocument") MultipartFile identityDocument) {
-        Document document = new Document();
         if (!ExpirationLink.isLinkValid(token))
             return new ResponseEntity<>(
                     Map.of("message", "link has expired!"),
@@ -161,15 +160,23 @@ public class studentController {
                     HttpStatus.BAD_REQUEST
             );
 
+        BursaryApplicants application = bursaryApplication.get();
+        Document document = documentRepository.findByStudentApplicationId(application.getBursaryApplicantId())
+                .orElse(new Document());
+
         try {
             String transcriptLocation = fileStorageService.save(transcript);
             String identityDocumentLocation = fileStorageService.save(identityDocument);
 
-            document.setBursaryApplicationID(bursaryApplication.get().getBursaryApplicantId());
+            document.setBursaryApplicationID(application.getBursaryApplicantId());
             document.setTranscript(transcriptLocation);
             document.setIdentityDocument(identityDocumentLocation);
 
-            documentRepository.save(document);
+            if (!application.getStatus().equalsIgnoreCase("documents")) {
+                documentRepository.update(document);
+            } else {
+                documentRepository.save(document);
+            }
             bursaryApplicantsRepository.updateStatusToPending(bursaryApplication.get().getBursaryApplicantId());
         } catch (SQLException | IOException e) {
             return new ResponseEntity<>(

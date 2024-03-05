@@ -38,6 +38,7 @@ public class DocumentRepository {
 
     public Optional<Document> findByStudentId(long studentId) {
         String sql = "SELECT " +
+                     "  [DocumentID], " +
                      "  [Transcript], " +
                      "  [IdentityDocument] " +
                      "FROM " +
@@ -53,5 +54,36 @@ public class DocumentRepository {
         if (documents.isEmpty())
             return Optional.empty();
         return Optional.of(documents.get(0));
+    }
+
+
+    public Optional<Document> findByStudentApplicationId(long applicationId) {
+        String sql = "SELECT " +
+                "  [DocumentID], " +
+                "  [Transcript], " +
+                "  [IdentityDocument] " +
+                "FROM " +
+                "  [dbo].[Document] " +
+                "WHERE " +
+                "  [BursaryApplicantID] = ?";
+        List<Document> documents = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Document.class), applicationId);
+
+        if (documents.isEmpty())
+            return Optional.empty();
+        return Optional.of(documents.get(0));
+    }
+
+    public void update(Document document) throws SQLException {
+        String sql = "UPDATE [dbo].[Document] SET [Transcript] = ?, [IdentityDocument] = ? WHERE [DocumentID] = ?";
+
+        Object[] args = new Object[] {
+                document.getTranscript(),
+                document.getIdentityDocument(),
+                document.getDocumentId()
+        };
+        int updateCount = jdbcTemplate.update(sql, args);
+
+        if (updateCount < 1)
+            throw new SQLException("Saving documents failed!");
     }
 }
