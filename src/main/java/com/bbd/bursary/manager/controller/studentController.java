@@ -172,7 +172,7 @@ public class studentController {
             document.setTranscript(transcriptLocation);
             document.setIdentityDocument(identityDocumentLocation);
 
-            if (!application.getStatus().equalsIgnoreCase("documents")) {
+            if (document.getDocumentId() != 0) {
                 documentRepository.update(document);
             } else {
                 documentRepository.save(document);

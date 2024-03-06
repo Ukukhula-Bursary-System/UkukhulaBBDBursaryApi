@@ -30,7 +30,7 @@ public class ExpirationLink {
 
         String baseUrl = "https://ukukhulabursaryfrontend.onrender.com";
         String token = generateToken(email);
-        return baseUrl + "/upload-documents?token=" + token;
+        return baseUrl + "/upload-documents/?token=" + token;
     }
 
     public static String getEmail(String token) {
