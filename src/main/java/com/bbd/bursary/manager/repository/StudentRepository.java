@@ -1,13 +1,12 @@
 package com.bbd.bursary.manager.repository;
+
 import com.bbd.bursary.manager.model.Document;
 import com.bbd.bursary.manager.model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,9 +22,15 @@ public class StudentRepository {
 
     public Optional<Student> findById(long id) {
         String sql = "SELECT " +
-                     "      Application.[StudentID], Application.[FirstName], Application.[LastName], " +
-                     "      Application.[University], Application.[AverageMarks], Application.[BursaryAmount], " +
-                     "      Application.[Motivation], Application.[status], ContactDetails.[Email] " +
+                     "      Application.[StudentID], " +
+                     "      Application.[FirstName], " +
+                     "      Application.[LastName], " +
+                     "      Application.[University], " +
+                     "      Application.[AverageMarks], " +
+                     "      Application.[BursaryAmount], " +
+                     "      Application.[Motivation], " +
+                     "      Application.[status], " +
+                     "      ContactDetails.[Email] " +
                      "FROM  " +
                      "      [dbo].[Student_Bursary_Application] Application " +
                      "INNER JOIN " +
@@ -41,7 +46,7 @@ public class StudentRepository {
                      "ON " +
                      "      ContactDetails.[ContactDetailsID] = UserDetails.[ContactDetailsID] " +
                      "WHERE " +
-                     "      Student.[StudentID] = ? ";
+                     "      Application.[StudentID] = ? ";
         List<Student> students = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Student.class), id);
 
         if (students.isEmpty())
@@ -158,6 +163,36 @@ public class StudentRepository {
     public int getHodIdByEmail(String email) {
         String sql = "select dbo.getHODIdByEmail(?)";
         return jdbcTemplate.queryForObject(sql, Integer.class, email);
+    }
+
+    public List<Student> findByReviewerId(long reviewerId) {
+        String sql = "SELECT " +
+                "      Application.[StudentID], " +
+                "      Application.[FirstName], " +
+                "      Application.[LastName], " +
+                "      Application.[University], " +
+                "      Application.[AverageMarks], " +
+                "      Application.[BursaryAmount], " +
+                "      Application.[Motivation], " +
+                "      Application.[status], " +
+                "      ContactDetails.[Email] " +
+                "FROM  " +
+                "      [dbo].[Student_Bursary_Application] Application " +
+                "INNER JOIN " +
+                "      [dbo].[Student] Student " +
+                "ON " +
+                "      Student.[StudentID] = Application.[StudentID] " +
+                "INNER JOIN " +
+                "      [dbo].[User_Details] UserDetails " +
+                "ON " +
+                "      Student.[UserID] = UserDetails.[UserID] " +
+                "INNER JOIN " +
+                "      [dbo].[Contact_Details] ContactDetails " +
+                "ON " +
+                "      ContactDetails.[ContactDetailsID] = UserDetails.[ContactDetailsID] " +
+                "WHERE " +
+                "      Application.[BBDAdminID] = ? ";
+        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Student.class), reviewerId);
     }
 }
 

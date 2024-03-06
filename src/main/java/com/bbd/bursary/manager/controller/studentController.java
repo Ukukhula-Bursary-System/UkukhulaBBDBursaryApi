@@ -3,6 +3,7 @@ package com.bbd.bursary.manager.controller;
 import com.bbd.bursary.manager.model.BursaryApplicants;
 import com.bbd.bursary.manager.model.Document;
 import com.bbd.bursary.manager.model.Student;
+import com.bbd.bursary.manager.repository.BBDAdminRepository;
 import com.bbd.bursary.manager.repository.BursaryApplicantsRepository;
 import com.bbd.bursary.manager.repository.DocumentRepository;
 import com.bbd.bursary.manager.repository.StudentRepository;
@@ -14,14 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +34,7 @@ public class studentController {
     private final StudentRepository studentRepository;
     private final BursaryApplicantsRepository bursaryApplicantsRepository;
     private final DocumentRepository documentRepository;
+    private final BBDAdminRepository bbdAdminRepository;
     private final EmailService emailService;
     private final FileStorageService fileStorageService;
 
@@ -42,10 +42,12 @@ public class studentController {
     public studentController(StudentRepository studentRepository,
                              BursaryApplicantsRepository bursaryApplicantsRepository,
                              DocumentRepository documentRepository,
+                             BBDAdminRepository bbdAdminRepository,
                              EmailService emailService, FileStorageService fileStorageService) {
         this.studentRepository = studentRepository;
         this.bursaryApplicantsRepository = bursaryApplicantsRepository;
         this.documentRepository = documentRepository;
+        this.bbdAdminRepository = bbdAdminRepository;
         this.emailService = emailService;
         this.fileStorageService = fileStorageService;
     }
@@ -282,5 +284,18 @@ public class studentController {
                 studentOptional.get(),
                 HttpStatus.OK
         );
+    }
+
+    @GetMapping("/reviewer/{email}")
+    public ResponseEntity<?> retrieveAllReviewersStudent(@PathVariable("email") String email) {
+        if (!LoggedUser.checkRole(List.of("Reviewer")))
+            return LoggedUser.unauthorizedResponse("/institute/funds");
+
+        long reviewerId = bbdAdminRepository.findByEmail(email)
+                .get().getBBDAdminId();
+
+        List<Student> students = studentRepository.findByReviewerId(reviewerId);
+
+        return new ResponseEntity<>(students, students.isEmpty()? HttpStatus.NO_CONTENT: HttpStatus.OK);
     }
 }

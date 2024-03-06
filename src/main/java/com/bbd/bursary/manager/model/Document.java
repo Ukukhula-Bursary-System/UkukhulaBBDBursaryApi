@@ -38,4 +38,14 @@ public class Document {
     public void setBursaryApplicationID(long bursaryApplicationID) {
         BursaryApplicationID = bursaryApplicationID;
     }
+
+    @Override
+    public String toString() {
+        return "Document{" +
+                "documentId=" + documentId +
+                ", Transcript='" + Transcript + '\'' +
+                ", IdentityDocument='" + IdentityDocument + '\'' +
+                ", BursaryApplicationID=" + BursaryApplicationID +
+                '}';
+    }
 }
